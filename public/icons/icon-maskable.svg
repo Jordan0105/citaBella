@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#FDF3F6"/>
+  <circle cx="256" cy="216" r="100" fill="#D96A8B"/>
+  <path d="M204 232c36 30 68 30 104 0" stroke="#FFF" stroke-width="18" stroke-linecap="round" fill="none"/>
+  <circle cx="222" cy="194" r="12" fill="#FFF"/>
+  <circle cx="290" cy="194" r="12" fill="#FFF"/>
+  <path d="M256 128l12 28 28 12-28 12-12 28-12-28-28-12 28-12z" fill="#E8C893"/>
+  <text x="256" y="400" font-family="Georgia, serif" font-size="56" font-weight="bold" fill="#C25070" text-anchor="middle">CitaBella</text>
+</svg>
