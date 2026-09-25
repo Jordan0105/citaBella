@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { formatMoney } from "@/lib/money";
 import type { ReportData } from "../queries/get-report";
 
 interface ReportChartProps {
@@ -61,10 +62,15 @@ export function ReportChart({ series }: ReportChartProps) {
               borderRadius: 12,
               color: "var(--card-foreground)",
             }}
+            cursor={{ fill: "#D96A8B", fillOpacity: 0.15 }}
+            formatter={(value, name) => [
+              formatMoney(Number(value), name === "USD" ? "USD" : "NIO"),
+              name,
+            ]}
           />
           <Legend />
-          <Bar dataKey="nio" name="C$" fill="#D96A8B" radius={[6, 6, 0, 0]} />
-          <Bar dataKey="usd" name="$" fill="#E8C893" radius={[6, 6, 0, 0]} />
+          <Bar dataKey="nio" name="NIO" fill="#D96A8B" radius={[6, 6, 0, 0]} />
+          <Bar dataKey="usd" name="USD" fill="#E8C893" radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

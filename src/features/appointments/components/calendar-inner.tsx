@@ -4,6 +4,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/react/daygrid";
 import timeGridPlugin from "@fullcalendar/react/timegrid";
 import interactionPlugin from "@fullcalendar/react/interaction";
+import classicThemePlugin from "@fullcalendar/react/themes/classic";
 import esLocale from "@fullcalendar/react/locales/es";
 import type { EventDisplayInfo } from "@fullcalendar/react";
 import { Check } from "lucide-react";
@@ -51,7 +52,12 @@ export default function CalendarInner({
     <FullCalendar
       locale={esLocale}
       timeZone="America/Managua"
-      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+      plugins={[
+        classicThemePlugin,
+        dayGridPlugin,
+        timeGridPlugin,
+        interactionPlugin,
+      ]}
       initialView="timeGridDay"
       headerToolbar={{
         left: "prev,next today",

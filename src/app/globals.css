@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@fullcalendar/react/skeleton.css";
+@import "@fullcalendar/react/themes/classic/theme.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -136,6 +138,40 @@
   --sidebar-accent-foreground: #d9d2e6;
   --sidebar-border: #322b40;
   --sidebar-ring: #d96a8b;
+}
+
+:root {
+  --fc-classic-background: var(--card);
+  --fc-classic-foreground: var(--card-foreground);
+  --fc-classic-border: var(--border);
+  --fc-classic-border-style: solid;
+  --fc-classic-faint: var(--muted);
+  --fc-classic-muted: var(--muted);
+  --fc-classic-strong: var(--accent);
+  --fc-classic-strong-border: var(--border);
+  --fc-classic-faint-foreground: var(--muted-foreground);
+  --fc-classic-muted-foreground: var(--muted-foreground);
+
+  --fc-classic-button: var(--primary);
+  --fc-classic-button-border: var(--primary);
+  --fc-classic-button-foreground: var(--primary-foreground);
+  --fc-classic-button-strong: var(--color-bella-600);
+  --fc-classic-button-strong-border: var(--color-bella-700);
+  --fc-classic-button-outline: var(--ring);
+
+  --fc-classic-primary: var(--primary);
+  --fc-classic-event: var(--primary);
+  --fc-classic-event-contrast: var(--primary-foreground);
+  --fc-classic-background-event: var(--muted-foreground);
+  --fc-classic-background-event-opacity: 15%;
+  --fc-classic-background-event-foreground-opacity: 50%;
+  --fc-classic-highlight: color-mix(in srgb, var(--primary) 18%, transparent);
+  --fc-classic-today: color-mix(in srgb, var(--primary) 10%, transparent);
+  --fc-classic-now: var(--destructive);
+
+  --fc-classic-ring-color: var(--ring);
+  --fc-classic-small-dot-width: 8px;
+  --fc-classic-large-dot-width: 10px;
 }
 
 @layer base {
