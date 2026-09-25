@@ -62,15 +62,25 @@ export function ReportChart({ series }: ReportChartProps) {
               borderRadius: 12,
               color: "var(--card-foreground)",
             }}
-            cursor={{ fill: "#D96A8B", fillOpacity: 0.15 }}
+            cursor={{ fill: "var(--chart-income-nio)", fillOpacity: 0.15 }}
             formatter={(value, name) => [
               formatMoney(Number(value), name === "USD" ? "USD" : "NIO"),
               name,
             ]}
           />
           <Legend />
-          <Bar dataKey="nio" name="NIO" fill="#D96A8B" radius={[6, 6, 0, 0]} />
-          <Bar dataKey="usd" name="USD" fill="#E8C893" radius={[6, 6, 0, 0]} />
+          <Bar
+            dataKey="nio"
+            name="NIO"
+            fill="var(--chart-income-nio)"
+            radius={[6, 6, 0, 0]}
+          />
+          <Bar
+            dataKey="usd"
+            name="USD"
+            fill="var(--chart-income-usd)"
+            radius={[6, 6, 0, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>
