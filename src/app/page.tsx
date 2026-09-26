@@ -1,5 +1,7 @@
+import { redirect } from "next/navigation";
 import { BarChart3, CalendarDays, Sparkles, Wallet } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { createClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -29,7 +31,14 @@ const features = [
   },
 ];
 
-export default function Home() {
+/** Portada pública: bienvenida para visitantes; con sesión pasa directo al dashboard. */
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) redirect("/dashboard");
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-bella-50 via-background to-lavanda-100 p-6 dark:from-background dark:via-background dark:to-accent">
       <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-10 text-center">
@@ -51,6 +60,10 @@ export default function Home() {
           </p>
         </div>
 
+        <Button asChild size="lg" className="rounded-full px-8">
+          <a href="/login">Iniciar sesión</a>
+        </Button>
+
         <div className="grid w-full gap-4 sm:grid-cols-3">
           {features.map((feature) => (
             <Card key={feature.title} className="shadow-soft">
@@ -69,16 +82,6 @@ export default function Home() {
               <CardContent />
             </Card>
           ))}
-        </div>
-
-        <div className="flex flex-col items-center gap-2">
-          <Badge variant="secondary" className="rounded-full px-4 py-1">
-            Scaffold listo — Fase 0
-          </Badge>
-          <p className="text-sm text-muted-foreground">
-            Siguiente: Fase 1 — Base de datos y auth. Ver{" "}
-            <span className="font-medium text-foreground">docs/roadmap.md</span>
-          </p>
         </div>
       </div>
     </main>
