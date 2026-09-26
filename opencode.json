@@ -4,5 +4,12 @@
     "AGENTS.md",
     "instructions/project-rules.md",
     "instructions/coding-style.md"
-  ]
+  ],
+  "mcp": {
+    "vercel": {
+      "type": "remote",
+      "url": "https://mcp.vercel.com",
+      "enabled": true
+    }
+  }
 }

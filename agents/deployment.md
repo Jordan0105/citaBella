@@ -35,20 +35,36 @@
 | `SUPABASE_SERVICE_ROLE_KEY`     | **server only** | operaciones de sistema; jamás exponer     |
 | `NEXT_PUBLIC_APP_URL`           | público         | URL canónica (redirects, sitemap)         |
 | `CRON_SECRET`                   | server          | protege endpoints de cron (recordatorios) |
+| `WHATSAPP_PROVIDER`             | server          | `meta` \| `mock`; fallback `mock`         |
+| `WHATSAPP_API_TOKEN`            | server          | token de Meta WhatsApp Business API       |
+| `WHATSAPP_PHONE_NUMBER_ID`      | server          | ID del número de teléfono de WhatsApp     |
+| `WHATSAPP_TEMPLATE_REMINDER`    | server          | nombre del template de recordatorio       |
+| `WHATSAPP_WEBHOOK_VERIFY_TOKEN` | server          | verifica el webhook de Meta (GET)         |
+| `WHATSAPP_APP_SECRET`           | server          | firma del webhook de Meta (POST)          |
 
 Regla: cualquier variable nueva se agrega a `.env.example` y a este archivo en
 el mismo PR.
 
-## Flujo de release
+## Flujo de ramas y release
 
 ```
-1. PR abierto        → Vercel Preview deploy (automático)
-2. Preview verificado → QA checklist + revisión security (si aplica)
-3. Merge a main      → Vercel Production deploy
-4. Migraciones       → supabase db push (ANTES del primer tráfico si hay schema nuevo)
-5. Post-deploy       → checklist de humo
-6. Si falla          → rollback (ver abajo)
+main  ←──── release PR ←──── dev
+                 ↑
+                 │
+dev ←──── PR ←── feat/<slug>
+        (squash)
 ```
+
+1. Cada feature branch nace de `dev`.
+2. PR contra `dev` → Vercel Preview deploy (automático).
+3. Preview verificado + QA checklist + revisión security (si aplica).
+4. Merge squash a `dev`.
+5. Cuando `dev` esté estable: PR `dev → main` (release).
+6. Migraciones a producción (`supabase db push`) ANTES del primer tráfico si
+   hay schema nuevo.
+7. Merge a `main` → Vercel Production deploy.
+8. Post-deploy: checklist de humo.
+9. Si falla → rollback (ver abajo).
 
 **Orden crítico**: con cambios de schema, migrar primero (`db push`), deployar
 después. El código nuevo debe ser compatible con el schema en transición

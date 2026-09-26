@@ -169,8 +169,9 @@ Una tarea está **Done** solo si cumple TODO esto:
 
 ---
 
-## 8. Checklist antes de hacer merge
+## 8. Checklist antes de hacer merge a `dev`
 
+- [ ] Rama creada desde `dev` con naming `<tipo>/<slug-kebab>`.
 - [ ] Commits convencionales (`instructions/git-workflow.md`).
 - [ ] `pnpm lint && pnpm typecheck && pnpm test` en verde.
 - [ ] Sin secretos, ni `.env`, ni claves en el diff.
@@ -179,6 +180,7 @@ Una tarea está **Done** solo si cumple TODO esto:
 - [ ] QA checklist de la feature completada.
 - [ ] Screenshots de mobile + desktop + dark mode en el PR (si es UI).
 - [ ] `docs/` actualizada (schema, business-rules, permissions) si aplica.
+- [ ] PR contra `dev` (no contra `main`, salvo release).
 
 ---
 
