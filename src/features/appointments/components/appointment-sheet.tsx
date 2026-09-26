@@ -23,6 +23,7 @@ import {
   cancelAppointment,
   updateAppointmentStatus,
 } from "../actions/manage-appointment";
+import { sendWhatsAppReminder } from "@/features/notifications/actions/send-whatsapp";
 import { FinalizeDialog } from "./finalize-dialog";
 import type { AuthRole } from "@/features/auth/queries/get-auth-context";
 import type { AppointmentDTO } from "../types";
@@ -160,19 +161,7 @@ function SheetShell({
 
           {(appointment.status === "pending" ||
             appointment.status === "confirmed") &&
-            whatsApp && (
-              <a
-                href={`https://wa.me/${whatsApp}?text=${encodeURIComponent(
-                  `Hola ${appointment.clientName}, te recordamos tu cita en CitaBella el ${formatManaguaDate(new Date(appointment.startsAt), "date")} a las ${formatManaguaDate(new Date(appointment.startsAt), "time")}. ¡Te esperamos!`,
-                )}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-input px-4 text-sm font-medium hover:bg-accent"
-              >
-                <MessageCircle className="h-4 w-4" aria-hidden />
-                Recordar por WhatsApp
-              </a>
-            )}
+            whatsApp && <WhatsAppReminderButton appointment={appointment} />}
 
           <ul className="space-y-1">
             {appointment.services.map((line) => (
@@ -204,6 +193,47 @@ function SheetShell({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function WhatsAppReminderButton({
+  appointment,
+}: {
+  appointment: AppointmentDTO;
+}) {
+  const [isPending, setIsPending] = useState(false);
+
+  async function handleClick() {
+    setIsPending(true);
+    const result = await sendWhatsAppReminder({
+      appointmentId: appointment.id,
+    });
+    setIsPending(false);
+    if (!result.ok) {
+      toast.error(result.error.message);
+      return;
+    }
+    toast.success(
+      result.data.mock
+        ? "Recordatorio simulado (modo mock)"
+        : "Recordatorio enviado por WhatsApp",
+    );
+  }
+
+  return (
+    <Button
+      variant="outline"
+      onClick={handleClick}
+      disabled={isPending}
+      className="w-full rounded-full"
+    >
+      {isPending ? (
+        <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+      ) : (
+        <MessageCircle className="h-4 w-4" aria-hidden />
+      )}
+      Recordar por WhatsApp
+    </Button>
   );
 }
 

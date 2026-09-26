@@ -316,6 +316,37 @@ create table notifications (
 create index idx_notifications_user on notifications (user_id, created_at desc);
 ```
 
+### whatsapp_messages — log de envíos WhatsApp
+
+```sql
+create table whatsapp_messages (
+  id uuid primary key default gen_random_uuid(),
+  notification_id uuid references notifications (id) on delete set null,
+  appointment_id uuid references appointments (id) on delete set null,
+  client_id uuid references clients (id) on delete set null,
+  phone text not null,
+  provider text not null default 'mock',            -- 'mock'|'meta'
+  provider_message_id text,                         -- id devuelto por Meta
+  template_name text,
+  body text,
+  status text not null default 'pending'            -- pending|sent|delivered|read|failed
+    constraint chk_whatsapp_messages_status
+      check (status in ('pending', 'sent', 'delivered', 'read', 'failed')),
+  error_message text,
+  sent_at timestamptz,
+  delivered_at timestamptz,
+  read_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index idx_whatsapp_messages_appointment on whatsapp_messages (appointment_id, created_at desc);
+create index idx_whatsapp_messages_provider_msg on whatsapp_messages (provider_message_id);
+create index idx_whatsapp_messages_status on whatsapp_messages (status, created_at desc);
+```
+
+RLS: owner todo; trabajadora solo ve/envía los de sus citas; recepcionista solo
+ve. Insert/updates desde el webhook usan service role (bypass RLS).
+
 ---
 
 ## 4. Funciones SQL (lógica transaccional)

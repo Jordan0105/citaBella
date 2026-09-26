@@ -1,6 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import { managuaWallToUtcISO } from "@/lib/dates";
+import {
+  createWhatsAppProvider,
+  dispatchWhatsAppReminder,
+} from "@/lib/notifications";
 
 /**
  * Cron de recordatorios (diario, 01:00 UTC = 19:00 Managua).
@@ -37,7 +41,7 @@ export async function GET(request: NextRequest) {
   const { data: appointments, error } = await supabase
     .from("appointments")
     .select(
-      `id, starts_at, status, client:clients ( full_name ), employee:employees ( id, full_name, user:users!employees_user_id_fkey ( id ) )`,
+      `id, client_id, starts_at, status, client:clients ( full_name, phone, whatsapp ), employee:employees ( id, full_name, user:users!employees_user_id_fkey ( id ) )`,
     )
     .in("status", ["pending", "confirmed"])
     .gte("starts_at", tomorrowStart)
@@ -54,10 +58,18 @@ export async function GET(request: NextRequest) {
     .eq("role", "owner")
     .single();
 
+  const provider = createWhatsAppProvider();
+  const useWhatsApp =
+    process.env.WHATSAPP_PROVIDER === "meta" || provider.name === "mock";
+
   let created = 0;
+  let whatsappSent = 0;
   for (const appt of appointments ?? []) {
-    const clientName =
-      (appt.client as { full_name?: string } | null)?.full_name ?? "tu cliente";
+    const client = appt.client as {
+      full_name?: string;
+      phone?: string | null;
+      whatsapp?: string | null;
+    } | null;
     const employeeName =
       (appt.employee as { full_name?: string } | null)?.full_name ?? "";
     const time = new Date(appt.starts_at).toLocaleTimeString("es-NI", {
@@ -66,6 +78,7 @@ export async function GET(request: NextRequest) {
       minute: "2-digit",
       hourCycle: "h23",
     });
+    const clientName = client?.full_name ?? "tu cliente";
     const title = `Recordatorio: ${clientName} mañana ${time}`;
     const body = `Cita de ${clientName} mañana a las ${time}${
       employeeName ? ` con ${employeeName}` : ""
@@ -99,7 +112,24 @@ export async function GET(request: NextRequest) {
       }
       if (data?.length) created += 1;
     }
+
+    if (useWhatsApp && (client?.phone || client?.whatsapp)) {
+      const result = await dispatchWhatsAppReminder(
+        supabase,
+        {
+          id: appt.id,
+          clientId: appt.client_id as string,
+          clientName,
+          clientPhone: client.phone ?? null,
+          clientWhatsapp: client.whatsapp ?? null,
+          employeeName,
+          startsAt: appt.starts_at,
+        },
+        provider,
+      );
+      if (result.ok) whatsappSent += 1;
+    }
   }
 
-  return NextResponse.json({ ok: true, created });
+  return NextResponse.json({ ok: true, created, whatsappSent });
 }

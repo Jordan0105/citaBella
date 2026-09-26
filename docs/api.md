@@ -167,14 +167,27 @@ updateSetting(key: string; value: Json): Promise<ActionResult<null>>
 Lecturas: `useSettings()` (público para roles: defaults y monedas; salon_info
 editable solo owner).
 
+## notifications
+
+```ts
+sendWhatsAppReminder(input: { appointmentId: string }): Promise<ActionResult<{ providerMessageId: string; mock: boolean }>>
+//    owner o trabajadora asignada. Requiere teléfono del cliente.
+//    Modo mock por defecto; modo meta con WHATSAPP_PROVIDER=meta + token.
+markAllNotificationsRead(): Promise<ActionResult<null>>
+//    marca como leídas todas las notificaciones in-app del usuario.
+```
+
+Lecturas: `notificationsOptions()` (cliente, polling 60s).
+
 ---
 
 ## Webhooks / cron (única excepción en `app/api/`)
 
-| Ruta                          | Uso                                                      | Protección                          |
-| ----------------------------- | -------------------------------------------------------- | ----------------------------------- |
-| `POST /api/cron/reminders`    | recordatorios de citas del día siguiente → notifications | `Authorization: Bearer CRON_SECRET` |
-| `POST /api/webhooks/whatsapp` | futuro: confirmaciones por WhatsApp                      | firma del proveedor                 |
+| Ruta                          | Uso                                                      | Protección                           |
+| ----------------------------- | -------------------------------------------------------- | ------------------------------------ |
+| `POST /api/cron/reminders`    | recordatorios de citas del día siguiente → notifications | `Authorization: Bearer CRON_SECRET`  |
+| `POST /api/webhooks/whatsapp` | estados de entrega de WhatsApp (Meta)                    | firma HMAC con `WHATSAPP_APP_SECRET` |
+| `GET /api/webhooks/whatsapp`  | verificación del webhook de Meta                         | `WHATSAPP_WEBHOOK_VERIFY_TOKEN`      |
 
 Estas rutas no exponen CRUD; disparan procesos internos con service role
 (server only) y validan su propio secreto.

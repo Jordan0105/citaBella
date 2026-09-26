@@ -616,6 +616,85 @@ export type Database = {
           },
         ]
       }
+      whatsapp_messages: {
+        Row: {
+          appointment_id: string | null
+          body: string | null
+          client_id: string | null
+          created_at: string
+          delivered_at: string | null
+          error_message: string | null
+          id: string
+          notification_id: string | null
+          phone: string
+          provider: string
+          provider_message_id: string | null
+          read_at: string | null
+          sent_at: string | null
+          status: string
+          template_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          body?: string | null
+          client_id?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          notification_id?: string | null
+          phone: string
+          provider?: string
+          provider_message_id?: string | null
+          read_at?: string | null
+          sent_at?: string | null
+          status?: string
+          template_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          body?: string | null
+          client_id?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          notification_id?: string | null
+          phone?: string
+          provider?: string
+          provider_message_id?: string | null
+          read_at?: string | null
+          sent_at?: string | null
+          status?: string
+          template_name?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_messages_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number

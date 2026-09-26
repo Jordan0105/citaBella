@@ -79,7 +79,8 @@ axe 0 críticos, presupuestos de perf verificados en build de producción,
 
 ## Fase 6 — Post-MVP (backlog)
 
-- [ ] Notificaciones WhatsApp Business API (confirmaciones/recordatorios).
+- [x] Notificaciones WhatsApp Business API (recordatorios manuales y automáticos,
+      webhook de estados). Confirmaciones por respuesta del cliente: pendiente.
 - [ ] Fotos de servicios realizados (Storage) en historial del cliente.
 - [ ] Fidelización: cumpleaños, clientes recurrentes, promociones.
 - [ ] Multi-sucursal (evaluar necesidad real antes de modelar).

@@ -147,7 +147,8 @@ Detalle completo: `docs/permissions.md`.
 ## 7. Futuro reservado (extensiones sin romper)
 
 - Notificaciones (WhatsApp/email): `notifications` ya modelada; adaptador
-  `lib/notifications/`.
+  `lib/notifications/` con providers `meta` y `mock`, action `sendWhatsAppReminder`,
+  webhook `/api/webhooks/whatsapp` y registro en `whatsapp_messages`.
 - Multi-sucursal: `settings` y tablas tendrían `salon_id`; decisión pendiente
   (no modelar hasta necesidad real).
 - Recordatorios automáticos: cron en `app/api/cron/` con `CRON_SECRET`.

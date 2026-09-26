@@ -35,7 +35,7 @@
 | `SUPABASE_SERVICE_ROLE_KEY`     | **server only** | operaciones de sistema; jamás exponer     |
 | `NEXT_PUBLIC_APP_URL`           | público         | URL canónica (redirects, sitemap)         |
 | `CRON_SECRET`                   | server          | protege endpoints de cron (recordatorios) |
-| `WHATSAPP_PROVIDER`             | server          | `meta` \| `mock`; fallback `mock`         |
+| `WHATSAPP_PROVIDER`             | server          | `meta` o `mock`; fallback `mock`          |
 | `WHATSAPP_API_TOKEN`            | server          | token de Meta WhatsApp Business API       |
 | `WHATSAPP_PHONE_NUMBER_ID`      | server          | ID del número de teléfono de WhatsApp     |
 | `WHATSAPP_TEMPLATE_REMINDER`    | server          | nombre del template de recordatorio       |
