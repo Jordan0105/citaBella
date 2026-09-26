@@ -329,9 +329,15 @@ create table whatsapp_messages (
   provider_message_id text,                         -- id devuelto por Meta
   template_name text,
   body text,
-  status text not null default 'pending'            -- pending|sent|delivered|read|failed
+  status text not null default 'pending'            -- pending|sent|delivered|read|failed|received
     constraint chk_whatsapp_messages_status
-      check (status in ('pending', 'sent', 'delivered', 'read', 'failed')),
+      check (status in ('pending', 'sent', 'delivered', 'read', 'failed', 'received')),
+  direction text not null default 'outbound'        -- outbound|inbound
+    constraint chk_whatsapp_messages_direction
+      check (direction in ('outbound', 'inbound')),
+  action_taken text,                                -- confirmed|cancelled|ignored
+    constraint chk_whatsapp_messages_action_taken
+      check (action_taken in ('confirmed', 'cancelled', 'ignored')),
   error_message text,
   sent_at timestamptz,
   delivered_at timestamptz,
@@ -341,7 +347,9 @@ create table whatsapp_messages (
 );
 create index idx_whatsapp_messages_appointment on whatsapp_messages (appointment_id, created_at desc);
 create index idx_whatsapp_messages_provider_msg on whatsapp_messages (provider_message_id);
+create index idx_whatsapp_messages_provider_msg_direction on whatsapp_messages (provider_message_id, direction);
 create index idx_whatsapp_messages_status on whatsapp_messages (status, created_at desc);
+create index idx_whatsapp_messages_direction on whatsapp_messages (direction, action_taken);
 ```
 
 RLS: owner todo; trabajadora solo ve/envía los de sus citas; recepcionista solo

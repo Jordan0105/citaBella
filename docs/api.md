@@ -183,11 +183,11 @@ Lecturas: `notificationsOptions()` (cliente, polling 60s).
 
 ## Webhooks / cron (única excepción en `app/api/`)
 
-| Ruta                          | Uso                                                      | Protección                           |
-| ----------------------------- | -------------------------------------------------------- | ------------------------------------ |
-| `POST /api/cron/reminders`    | recordatorios de citas del día siguiente → notifications | `Authorization: Bearer CRON_SECRET`  |
-| `POST /api/webhooks/whatsapp` | estados de entrega de WhatsApp (Meta)                    | firma HMAC con `WHATSAPP_APP_SECRET` |
-| `GET /api/webhooks/whatsapp`  | verificación del webhook de Meta                         | `WHATSAPP_WEBHOOK_VERIFY_TOKEN`      |
+| Ruta                          | Uso                                                        | Protección                           |
+| ----------------------------- | ---------------------------------------------------------- | ------------------------------------ |
+| `POST /api/cron/reminders`    | recordatorios de citas del día siguiente → notifications   | `Authorization: Bearer CRON_SECRET`  |
+| `POST /api/webhooks/whatsapp` | estados de entrega + mensajes entrantes de WhatsApp (Meta) | firma HMAC con `WHATSAPP_APP_SECRET` |
+| `GET /api/webhooks/whatsapp`  | verificación del webhook de Meta                           | `WHATSAPP_WEBHOOK_VERIFY_TOKEN`      |
 
 Estas rutas no exponen CRUD; disparan procesos internos con service role
 (server only) y validan su propio secreto.

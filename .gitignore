@@ -50,3 +50,8 @@ playwright-report
 
 # envsitter runtime
 .envsitter
+
+# server-manager runtime
+.server-logs/
+.servers.json
+

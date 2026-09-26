@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { verifyWhatsAppSignature } from "../webhook";
 import { createMockWhatsAppProvider } from "../providers/mock";
 import { normalizeWhatsAppPhone } from "../types";
+import { parseConfirmationResponse } from "../parse-incoming";
 
 describe("notifications", () => {
   describe("normalizeWhatsAppPhone", () => {
@@ -43,6 +44,23 @@ describe("notifications", () => {
       expect(verifyWhatsAppSignature(body, "sha256=abc", "secreto")).toBe(
         false,
       );
+    });
+  });
+
+  describe("parseConfirmationResponse", () => {
+    it.each([
+      ["Sí", "confirmed"],
+      ["confirmo", "confirmed"],
+      ["OK", "confirmed"],
+      [" Vale! ", "confirmed"],
+      ["no", "cancelled"],
+      ["no puedo", "cancelled"],
+      ["cancelo", "cancelled"],
+      ["reprogramar", "cancelled"],
+      ["tal vez", null],
+      ["", null],
+    ])("%s → %s", (input, expected) => {
+      expect(parseConfirmationResponse(input)).toBe(expected);
     });
   });
 });

@@ -21,6 +21,11 @@ pending ──confirm──► confirmed ──start──► in_progress ──
   `actual_end_at`, se genera el ingreso (`payments`) y las comisiones
   (`commissions`) en una transacción. Visualmente distinta en calendario
   (verde salvia, check, opacidad).
+- **Confirmación/cancelación por WhatsApp**: el cliente responde al recordatorio
+  con palabras clave (`sí`, `confirmo`, `no`, `cancelo`, `reprogramar`, etc.).
+  El webhook actualiza el estado de la cita siguiente (la más cercana en el
+  futuro) y registra la respuesta en `whatsapp_messages`. La cancelación vía
+  WhatsApp guarda el texto recibido en `notes` como motivo.
 
 ### Conflictos y disponibilidad (validación en DB, siempre)
 

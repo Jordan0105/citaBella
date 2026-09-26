@@ -618,11 +618,13 @@ export type Database = {
       }
       whatsapp_messages: {
         Row: {
+          action_taken: string | null
           appointment_id: string | null
           body: string | null
           client_id: string | null
           created_at: string
           delivered_at: string | null
+          direction: string
           error_message: string | null
           id: string
           notification_id: string | null
@@ -636,11 +638,13 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          action_taken?: string | null
           appointment_id?: string | null
           body?: string | null
           client_id?: string | null
           created_at?: string
           delivered_at?: string | null
+          direction?: string
           error_message?: string | null
           id?: string
           notification_id?: string | null
@@ -654,11 +658,13 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          action_taken?: string | null
           appointment_id?: string | null
           body?: string | null
           client_id?: string | null
           created_at?: string
           delivered_at?: string | null
+          direction?: string
           error_message?: string | null
           id?: string
           notification_id?: string | null

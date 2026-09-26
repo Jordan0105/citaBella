@@ -55,6 +55,7 @@ export async function dispatchWhatsAppReminder(
       phone: normalizeWhatsAppPhone(phone),
       provider: provider.name,
       body,
+      direction: "outbound",
       status: "failed",
       error_message: result.error,
     });
@@ -68,6 +69,7 @@ export async function dispatchWhatsAppReminder(
     provider: provider.name,
     provider_message_id: result.providerMessageId,
     body,
+    direction: "outbound",
     status: result.status,
     sent_at: new Date().toISOString(),
   });

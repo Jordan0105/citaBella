@@ -1,5 +1,5 @@
 export type WhatsAppMessageStatus =
-  "pending" | "sent" | "delivered" | "read" | "failed";
+  "pending" | "sent" | "delivered" | "read" | "failed" | "received";
 
 export interface WhatsAppMessageInput {
   /** Teléfono en formato E.164, ej. +50584123456. */

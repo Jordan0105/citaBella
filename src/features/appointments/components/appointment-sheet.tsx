@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Check, Clock, Loader2, MessageCircle, PencilLine } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import {
   updateAppointmentStatus,
 } from "../actions/manage-appointment";
 import { sendWhatsAppReminder } from "@/features/notifications/actions/send-whatsapp";
+import { whatsappConfirmationOptions } from "@/features/notifications/queries/whatsapp-confirmation";
 import { FinalizeDialog } from "./finalize-dialog";
 import type { AuthRole } from "@/features/auth/queries/get-auth-context";
 import type { AppointmentDTO } from "../types";
@@ -138,6 +140,10 @@ function SheetShell({
               </span>
             )}
           </DialogDescription>
+          <WhatsAppConfirmationBadge
+            appointmentId={appointment.id}
+            status={appointment.status}
+          />
         </DialogHeader>
 
         <div className="space-y-3 text-sm">
@@ -194,6 +200,37 @@ function SheetShell({
       </DialogContent>
     </Dialog>
   );
+}
+
+function WhatsAppConfirmationBadge({
+  appointmentId,
+  status,
+}: {
+  appointmentId: string;
+  status: AppointmentStatus;
+}) {
+  const { data } = useQuery(whatsappConfirmationOptions(appointmentId));
+  if (!data) return null;
+
+  if (data.confirmedAt && status !== "completed" && status !== "cancelled") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-medium text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
+        <MessageCircle className="h-3 w-3" aria-hidden />
+        Confirmada por WhatsApp
+      </span>
+    );
+  }
+
+  if (data.cancelledAt && status === "cancelled") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-2.5 py-1 text-xs font-medium text-rose-900 dark:bg-rose-950 dark:text-rose-200">
+        <MessageCircle className="h-3 w-3" aria-hidden />
+        Cancelada por WhatsApp
+      </span>
+    );
+  }
+
+  return null;
 }
 
 function WhatsAppReminderButton({
