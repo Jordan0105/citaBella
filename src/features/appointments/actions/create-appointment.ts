@@ -14,7 +14,7 @@ import {
   type CreateAppointmentInput,
 } from "../schemas/appointment";
 import type { AppointmentDTO } from "../types";
-import { APPOINTMENT_SELECT, mapAppointmentRow } from "../queries/mapper";
+import { mapAppointmentRow } from "../queries/mapper";
 
 /**
  * Crea una cita vía RPC transaccional: conflicto de horario, disponibilidad,
@@ -119,14 +119,39 @@ export async function createAppointment(
   revalidatePath("/appointments");
   revalidatePath("/dashboard");
 
-  const appointment = data as { appointment: { id: string } };
-  const { data: full } = await supabase
-    .from("appointments")
-    .select(APPOINTMENT_SELECT)
-    .eq("id", appointment.appointment.id)
-    .single();
+  // El RPC ya devuelve la fila creada (+ líneas); evita un segundo fetch.
+  const payload = data as {
+    appointment: {
+      id: string;
+      client_id: string;
+      employee_id: string;
+      starts_at: string;
+      ends_at: string;
+      status: AppointmentDTO["status"];
+      currency: AppointmentDTO["currency"];
+      price: number | string;
+      discount: number | string;
+      notes: string | null;
+    };
+    services: {
+      id: string;
+      service_id: string;
+      price: number | string;
+      discount: number | string;
+      duration_minutes: number;
+    }[];
+  };
 
-  return actionOk(mapAppointmentRow(full));
+  return actionOk(
+    mapAppointmentRow({
+      ...payload.appointment,
+      actual_end_at: null,
+      completed_at: null,
+      client: null,
+      employee: null,
+      services: payload.services,
+    }),
+  );
 }
 
 function mapRpcErrorCode(message: string): Parameters<typeof actionFail>[0] {

@@ -10,18 +10,7 @@ import {
 } from "@/types/action-result";
 import { clientSchema, type ClientInput } from "../schemas/client";
 import type { ClientDTO } from "../types";
-
-function mapClient(row: Record<string, unknown>): ClientDTO {
-  return {
-    id: row.id as string,
-    fullName: row.full_name as string,
-    phone: row.phone as string,
-    whatsapp: (row.whatsapp as string | null) ?? null,
-    email: (row.email as string | null) ?? null,
-    birthDate: (row.birth_date as string | null) ?? null,
-    notes: (row.notes as string | null) ?? null,
-  };
-}
+import { CLIENT_SELECT, mapClient } from "../queries/mapper";
 
 export async function createClient(
   input: ClientInput,
@@ -51,7 +40,7 @@ export async function createClient(
       birth_date: parsed.data.birthDate,
       notes: parsed.data.notes,
     })
-    .select("id, full_name, phone, whatsapp, email, birth_date, notes")
+    .select(CLIENT_SELECT)
     .single();
 
   if (error) {
@@ -96,7 +85,7 @@ export async function updateClient(
       notes: parsed.data.notes,
     })
     .eq("id", input.id)
-    .select("id, full_name, phone, whatsapp, email, birth_date, notes")
+    .select(CLIENT_SELECT)
     .single();
 
   if (error) {

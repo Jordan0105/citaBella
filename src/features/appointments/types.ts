@@ -59,17 +59,39 @@ export interface AppointmentsMeta {
 
 /**
  * Colores por estado del calendario (canónicos: agents/uiux.md §Semántica).
+ * Los valores viven como tokens CSS en globals.css (con variante .dark);
+ * aquí solo se referencian para que FullCalendar reciba strings.
  * El color de la trabajadora va en el borde izquierdo del evento.
  */
 export const STATUS_COLORS: Record<
   AppointmentStatus,
   { bg: string; text: string; stripe: string }
 > = {
-  pending: { bg: "#FBEED3", text: "#6B5217", stripe: "#E4C280" },
-  confirmed: { bg: "#E7DEF6", text: "#4A3F6B", stripe: "#B7A6E3" },
-  in_progress: { bg: "#DDEBF6", text: "#2F4E66", stripe: "#9CC5E8" },
-  completed: { bg: "#DEF0E3", text: "#2E5B3C", stripe: "#9CC9A8" },
-  cancelled: { bg: "#ECEAEF", text: "#8A8494", stripe: "#C9C4D2" },
+  pending: {
+    bg: "var(--status-pending-bg)",
+    text: "var(--status-pending-text)",
+    stripe: "var(--status-pending-stripe)",
+  },
+  confirmed: {
+    bg: "var(--status-confirmed-bg)",
+    text: "var(--status-confirmed-text)",
+    stripe: "var(--status-confirmed-stripe)",
+  },
+  in_progress: {
+    bg: "var(--status-in-progress-bg)",
+    text: "var(--status-in-progress-text)",
+    stripe: "var(--status-in-progress-stripe)",
+  },
+  completed: {
+    bg: "var(--status-completed-bg)",
+    text: "var(--status-completed-text)",
+    stripe: "var(--status-completed-stripe)",
+  },
+  cancelled: {
+    bg: "var(--status-cancelled-bg)",
+    text: "var(--status-cancelled-text)",
+    stripe: "var(--status-cancelled-stripe)",
+  },
 };
 
 export const APPOINTMENT_TRANSITIONS: Record<

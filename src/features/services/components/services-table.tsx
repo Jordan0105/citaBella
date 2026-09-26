@@ -6,7 +6,7 @@ import { Loader2, PencilLine, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatPercent } from "@/lib/money";
+import { formatMoney, formatPercent } from "@/lib/money";
 import { deactivateService } from "../actions/save-service";
 import { ServiceFormDialog } from "./service-form-dialog";
 import type { ServiceDTO } from "../types";
@@ -99,10 +99,10 @@ export function ServicesTable({ initialServices }: ServicesTableProps) {
               >
                 <td className="px-4 py-3 font-medium">{service.name}</td>
                 <td className="px-4 py-3 text-right tabular-nums">
-                  {service.priceNio.toFixed(2)}
+                  {formatMoney(service.priceNio, "NIO")}
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums">
-                  {service.priceUsd.toFixed(2)}
+                  {formatMoney(service.priceUsd, "USD")}
                 </td>
                 <td className="px-4 py-3 text-right text-muted-foreground tabular-nums">
                   {service.durationMinutes} min

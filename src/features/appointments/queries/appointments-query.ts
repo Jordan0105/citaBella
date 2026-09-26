@@ -10,8 +10,11 @@ export const appointmentsKeys = {
     [...appointmentsKeys.all, "range", { from, to }] as const,
 };
 
-export function appointmentsRangeOptions(from: string, to: string) {
-  return queryOptions({
+export function appointmentsRangeOptions(
+  from: string,
+  to: string,
+): ReturnType<typeof queryOptions<AppointmentDTO[]>> {
+  return queryOptions<AppointmentDTO[]>({
     queryKey: appointmentsKeys.range(from, to),
     queryFn: async (): Promise<AppointmentDTO[]> => {
       const supabase = createClient();

@@ -9,7 +9,7 @@ export const APPOINTMENT_SELECT = `*,
     service:services ( id, name )
   )` as const;
 
-type AppointmentRow = {
+export type AppointmentRow = {
   id: string;
   client_id: string;
   employee_id: string;

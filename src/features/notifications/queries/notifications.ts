@@ -26,8 +26,10 @@ function mapNotification(row: Record<string, unknown>): NotificationDTO {
 }
 
 /** Campana: notificaciones del usuario (RLS). Refetch cada 60 s. */
-export function notificationsOptions() {
-  return queryOptions({
+export function notificationsOptions(): ReturnType<
+  typeof queryOptions<NotificationDTO[]>
+> {
+  return queryOptions<NotificationDTO[]>({
     queryKey: notificationsKeys.all,
     queryFn: async (): Promise<NotificationDTO[]> => {
       const supabase = createClient();
@@ -43,12 +45,5 @@ export function notificationsOptions() {
   });
 }
 
-/** Marca todas las notificaciones del usuario como leídas. */
-export async function markAllRead(): Promise<void> {
-  const supabase = createClient();
-  const { error } = await supabase
-    .from("notifications")
-    .update({ read_at: new Date().toISOString() })
-    .is("read_at", null);
-  if (error) throw error;
-}
+/** Marca todas como leídas (mutación vía Server Action; el cliente no escribe). */
+export { markAllNotificationsRead as markAllRead } from "../actions/mark-read";

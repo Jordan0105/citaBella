@@ -574,6 +574,7 @@ export type Database = {
       }
       notifications: {
         Row: {
+          appointment_id: string | null
           body: string
           created_at: string
           id: string
@@ -584,6 +585,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          appointment_id?: string | null
           body: string
           created_at?: string
           id?: string
@@ -594,6 +596,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          appointment_id?: string | null
           body?: string
           created_at?: string
           id?: string
@@ -796,6 +799,18 @@ export type Database = {
           month: string | null
           spent: number | null
           visits: number | null
+        }
+        Relationships: []
+      }
+      v_daily_commissions: {
+        Row: {
+          appointments_qty: number | null
+          currency: Database["public"]["Enums"]["currency_code"] | null
+          day: string | null
+          employee_amount: number | null
+          employee_id: string | null
+          employee_name: string | null
+          owner_amount: number | null
         }
         Relationships: []
       }

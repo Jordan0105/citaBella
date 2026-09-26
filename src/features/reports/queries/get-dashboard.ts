@@ -3,6 +3,7 @@ import {
   endOfManaguaDay,
   startOfManaguaDay,
   startOfManaguaMonth,
+  todayManaguaISO,
 } from "@/lib/dates";
 import {
   APPOINTMENT_SELECT,
@@ -12,10 +13,6 @@ import type {
   AppointmentDTO,
   AppointmentsMeta,
 } from "@/features/appointments/types";
-
-function managuaToday(): string {
-  return new Date(Date.now() - 6 * 3600 * 1000).toISOString().slice(0, 10);
-}
 
 /** Citas de hoy (RLS filtra por rol: worker solo ve las suyas). */
 export async function getTodayAppointments(): Promise<AppointmentDTO[]> {
@@ -59,7 +56,7 @@ export async function getTodayRevenue(): Promise<RevenueByCurrency[]> {
   const { data, error } = await supabase
     .from("v_daily_revenue")
     .select("*")
-    .eq("day", managuaToday());
+    .eq("day", todayManaguaISO());
   if (error) throw error;
   return (data ?? []).map((row) => ({
     currency: row.currency as "NIO" | "USD",

@@ -171,7 +171,7 @@ Una tarea está **Done** solo si cumple TODO esto:
 
 ## 8. Checklist antes de hacer merge
 
-- [ ] Commits convencionales (`docs/git-workflow.md`).
+- [ ] Commits convencionales (`instructions/git-workflow.md`).
 - [ ] `pnpm lint && pnpm typecheck && pnpm test` en verde.
 - [ ] Sin secretos, ni `.env`, ni claves en el diff.
 - [ ] Migraciones nuevas probadas en local de arriba a abajo (`supabase db reset`).

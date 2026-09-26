@@ -22,12 +22,9 @@ import {
 } from "@/components/shared/payment-method-selector";
 import { formatManaguaDate } from "@/lib/dates";
 import { formatMoney, parseMoneyInput, type CurrencyCode } from "@/lib/money";
-import {
-  registerDirectIncome,
-  saveExpense,
-  type MovementDTO,
-} from "../actions/cash";
+import { registerDirectIncome, saveExpense } from "../actions/cash";
 import type { SaveExpenseInput } from "../schemas/cash";
+import type { MovementDTO } from "../types/movement";
 import type { CashData } from "../queries/get-cash";
 
 const METHOD_LABELS: Record<PaymentMethod, string> = {

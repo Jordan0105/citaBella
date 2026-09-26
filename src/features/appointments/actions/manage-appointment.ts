@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/rate-limit";
 import {
   actionFail,
   actionOk,
@@ -20,6 +21,7 @@ import {
 } from "../schemas/appointment";
 import type { AppointmentDTO, AppointmentReceiptDTO } from "../types";
 import { APPOINTMENT_SELECT, mapAppointmentRow } from "../queries/mapper";
+import type { AppointmentRow } from "../queries/mapper";
 
 const CALENDAR_PATHS = ["/calendar", "/appointments", "/dashboard"] as const;
 
@@ -79,6 +81,15 @@ function mapRpcError(message: string): {
 export async function updateAppointmentStatus(
   input: UpdateAppointmentStatusInput,
 ): Promise<ActionResult<AppointmentDTO>> {
+  if (
+    !(await rateLimit("updateAppointmentStatus", { max: 40, windowSec: 60 }))
+  ) {
+    return actionFail(
+      "RATE_LIMITED",
+      "Demasiadas operaciones. Espera un momento.",
+    );
+  }
+
   const parsed = updateAppointmentStatusSchema.safeParse(input);
   if (!parsed.success) {
     return actionFail(
@@ -114,6 +125,13 @@ export async function updateAppointmentStatus(
 export async function rescheduleAppointment(
   input: RescheduleAppointmentInput,
 ): Promise<ActionResult<AppointmentDTO>> {
+  if (!(await rateLimit("rescheduleAppointment", { max: 30, windowSec: 60 }))) {
+    return actionFail(
+      "RATE_LIMITED",
+      "Demasiadas operaciones. Espera un momento.",
+    );
+  }
+
   const parsed = rescheduleAppointmentSchema.safeParse(input);
   if (!parsed.success) {
     return actionFail(
@@ -136,11 +154,25 @@ export async function rescheduleAppointment(
   }
 
   revalidateAll();
-  const { data: full } = await supabase
+  const { data: full, error: fetchError } = await supabase
     .from("appointments")
     .select(APPOINTMENT_SELECT)
     .eq("id", (data as { id: string }).id)
     .single();
+
+  if (!full) {
+    // La reprogramación sí ocurrió; fallback: mapear la fila del RPC.
+    return actionOk(
+      mapAppointmentRow({
+        ...(data as unknown as AppointmentRow),
+        client: null,
+        employee: null,
+      }),
+    );
+  }
+  if (fetchError) {
+    return actionFail("DB_ERROR", "Cita reprogramada pero no se pudo leer");
+  }
   return actionOk(mapAppointmentRow(full));
 }
 
@@ -151,6 +183,13 @@ export async function rescheduleAppointment(
 export async function finalizeAppointment(
   input: FinalizeAppointmentInput,
 ): Promise<ActionResult<AppointmentReceiptDTO>> {
+  if (!(await rateLimit("finalizeAppointment", { max: 20, windowSec: 60 }))) {
+    return actionFail(
+      "RATE_LIMITED",
+      "Demasiadas operaciones. Espera un momento.",
+    );
+  }
+
   const parsed = finalizeAppointmentSchema.safeParse(input);
   if (!parsed.success) {
     return actionFail(
@@ -190,6 +229,13 @@ export async function finalizeAppointment(
 export async function cancelAppointment(
   input: CancelAppointmentInput,
 ): Promise<ActionResult<AppointmentDTO>> {
+  if (!(await rateLimit("cancelAppointment", { max: 30, windowSec: 60 }))) {
+    return actionFail(
+      "RATE_LIMITED",
+      "Demasiadas operaciones. Espera un momento.",
+    );
+  }
+
   const parsed = cancelAppointmentSchema.safeParse(input);
   if (!parsed.success) {
     return actionFail(
@@ -211,11 +257,25 @@ export async function cancelAppointment(
   }
 
   revalidateAll();
-  const { data: full } = await supabase
+  const { data: full, error: fetchError } = await supabase
     .from("appointments")
     .select(APPOINTMENT_SELECT)
     .eq("id", (data as { id: string }).id)
     .single();
+
+  if (!full) {
+    // La cancelación sí ocurrió; fallback: mapear la fila del RPC.
+    return actionOk(
+      mapAppointmentRow({
+        ...(data as unknown as AppointmentRow),
+        client: null,
+        employee: null,
+      }),
+    );
+  }
+  if (fetchError) {
+    return actionFail("DB_ERROR", "Cita cancelada pero no se pudo leer");
+  }
   return actionOk(mapAppointmentRow(full));
 }
 

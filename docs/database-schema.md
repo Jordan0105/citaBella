@@ -180,7 +180,7 @@ create table payments (
 );
 create index idx_payments_paid_at on payments (paid_at);
 create index idx_payments_appointment on payments (appointment_id);
--- trigger trg_payments_no_update: bloquea UPDATE/DELETE
+-- trigger trg_payments_immutable: bloquea UPDATE/DELETE
 ```
 
 ### commissions — comisiones snapshot (INMUTABLE)
@@ -202,7 +202,7 @@ create table commissions (
 );
 create index idx_commissions_created_at on commissions (created_at);
 create index idx_commissions_employee on commissions (employee_id, created_at);
--- trigger trg_commissions_no_update: bloquea UPDATE/DELETE
+-- trigger trg_commissions_immutable: bloquea UPDATE/DELETE
 -- CHECK employee_amount + owner_amount = base_amount (tolerancia 0.01)
 ```
 
@@ -320,20 +320,20 @@ create index idx_notifications_user on notifications (user_id, created_at desc);
 
 ## 4. Funciones SQL (lógica transaccional)
 
-| Función                                                                     | Propósito                                                                                                                          |
-| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `set_updated_at()`                                                          | trigger genérico `updated_at`                                                                                                      |
-| `audit_row(p_table)`                                                        | trigger de auditoría a `audit_logs`                                                                                                |
-| `block_mutation()`                                                          | trigger de inmutabilidad (`payments`, `commissions`, `audit_logs`)                                                                 |
-| `fn_current_role() returns user_role`                                       | rol del JWT desde `users`                                                                                                          |
-| `fn_current_employee_id() returns uuid`                                     | employee_id del JWT                                                                                                                |
-| `fn_check_appointment_conflict(p_employee, p_start, p_end) returns boolean` | solapamiento con citas activas                                                                                                     |
-| `fn_is_out_of_schedule(p_employee, p_start, p_end) returns boolean`         | fuera de `availability` o en `blocked_dates`                                                                                       |
-| `create_appointment_safe(p_input jsonb) returns jsonb`                      | crea cita validando conflicto + horario + bloqueos; `SLOT_TAKEN`/`OUT_OF_SCHEDULE`                                                 |
-| `reschedule_appointment(p_id, p_start, p_end) returns jsonb`                | mueve cita con las mismas validaciones                                                                                             |
-| `complete_appointment(p_appointment_id) returns jsonb`                      | finaliza cita: `completed_at`, `actual_end_at`, genera `payments` + `commissions` con snapshot (45/55 configurable), transaccional |
-| `cancel_appointment(p_id, p_reason) returns jsonb`                          | cancela cita pendiente/confirmada                                                                                                  |
-| `fn_exchange_rate(p_date date) returns numeric`                             | tasa del día desde `settings`                                                                                                      |
+| Función                                                                                          | Propósito                                                                                                                          |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `set_updated_at()`                                                                               | trigger genérico `updated_at`                                                                                                      |
+| `audit_row(p_table)`                                                                             | trigger de auditoría a `audit_logs`                                                                                                |
+| `block_mutation()`                                                                               | trigger de inmutabilidad (`payments`, `commissions`, `audit_logs`)                                                                 |
+| `fn_current_role() returns user_role`                                                            | rol del JWT desde `users`                                                                                                          |
+| `fn_current_employee_id() returns uuid`                                                          | employee_id del JWT                                                                                                                |
+| `fn_check_appointment_conflict(p_employee, p_start, p_end) returns boolean`                      | solapamiento con citas activas                                                                                                     |
+| `fn_is_out_of_schedule(p_employee, p_start, p_end) returns boolean`                              | fuera de `availability` o en `blocked_dates`                                                                                       |
+| `create_appointment_safe(p_input jsonb) returns jsonb`                                           | crea cita validando conflicto + horario + bloqueos; `SLOT_TAKEN`/`OUT_OF_SCHEDULE`                                                 |
+| `reschedule_appointment(p_id, p_start, p_end) returns jsonb`                                     | mueve cita con las mismas validaciones                                                                                             |
+| `complete_appointment(p_appointment_id, p_method default 'cash', p_tip default 0) returns jsonb` | finaliza cita: `completed_at`, `actual_end_at`, genera `payments` + `commissions` con snapshot (45/55 configurable), transaccional |
+| `cancel_appointment(p_id, p_reason) returns jsonb`                                               | cancela cita pendiente/confirmada                                                                                                  |
+| `fn_exchange_rate(p_date date) returns numeric`                                                  | tasa del día desde `settings`                                                                                                      |
 
 Reglas del snapshot de comisión (dentro de `complete_appointment`):
 

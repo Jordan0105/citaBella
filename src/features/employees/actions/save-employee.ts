@@ -16,26 +16,13 @@ import {
   type EmployeeIdInput,
   type EmployeeInput,
 } from "../schemas/employee";
-
-const EMPLOYEE_SELECT =
-  "id, full_name, specialty, color, commission_pct, phone, is_active" as const;
-
-function mapEmployee(row: Record<string, unknown>) {
-  return {
-    id: row.id as string,
-    fullName: row.full_name as string,
-    specialty: (row.specialty as string | null) ?? null,
-    color: row.color as string,
-    commissionPct: (row.commission_pct as number | null) ?? null,
-    phone: (row.phone as string | null) ?? null,
-    isActive: row.is_active as boolean,
-  };
-}
+import { EMPLOYEE_SELECT, mapEmployee } from "../queries/mapper";
+import type { EmployeeDTO } from "../types";
 
 /** Crea o actualiza una trabajadora. Owner only (RLS). */
 export async function saveEmployee(
   input: EmployeeInput & { id?: string },
-): Promise<ActionResult<ReturnType<typeof mapEmployee>>> {
+): Promise<ActionResult<EmployeeDTO>> {
   const { id, ...rest } = input;
   const parsed = employeeSchema.safeParse(rest);
   if (!parsed.success) {

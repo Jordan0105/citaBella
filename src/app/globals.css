@@ -177,11 +177,45 @@
 :root {
   --chart-income-nio: #d96a8b;
   --chart-income-usd: #e8c893;
+
+  /* Estados de cita (calendario). Canónicos: agents/uiux.md §Semántica. */
+  --status-pending-bg: #fbeed3;
+  --status-pending-text: #6b5217;
+  --status-pending-stripe: #e4c280;
+  --status-confirmed-bg: #e7def6;
+  --status-confirmed-text: #4a3f6b;
+  --status-confirmed-stripe: #b7a6e3;
+  --status-in-progress-bg: #ddebf6;
+  --status-in-progress-text: #2f4e66;
+  --status-in-progress-stripe: #9cc5e8;
+  --status-completed-bg: #def0e3;
+  --status-completed-text: #2e5b3c;
+  --status-completed-stripe: #9cc9a8;
+  --status-cancelled-bg: #eceaef;
+  --status-cancelled-text: #8a8494;
+  --status-cancelled-stripe: #c9c4d2;
 }
 
 .dark {
   --chart-income-nio: #d96a8b;
   --chart-income-usd: #e8c893;
+
+  /* Dark: mismos matices sobre paleta oscura (fondo translúcido + texto claro). */
+  --status-pending-bg: #3d2f14;
+  --status-pending-text: #f0d9a6;
+  --status-pending-stripe: #e4c280;
+  --status-confirmed-bg: #2f2545;
+  --status-confirmed-text: #cfc2f2;
+  --status-confirmed-stripe: #b7a6e3;
+  --status-in-progress-bg: #16293b;
+  --status-in-progress-text: #b9d6ee;
+  --status-in-progress-stripe: #9cc5e8;
+  --status-completed-bg: #16301f;
+  --status-completed-text: #b3d9be;
+  --status-completed-stripe: #9cc9a8;
+  --status-cancelled-bg: #2b2733;
+  --status-cancelled-text: #b3aebf;
+  --status-cancelled-stripe: #c9c4d2;
 }
 
 @layer base {

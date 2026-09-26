@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { PageHeader } from "@/components/shared/page-header";
+import { managuaWallToUtcISO, todayManaguaISO } from "@/lib/dates";
 import { getAuthContext } from "@/features/auth/queries/get-auth-context";
 import { ReportView } from "@/features/reports/components/report-view";
 import { MyReportView } from "@/features/reports/components/my-report-view";
@@ -53,7 +54,7 @@ export default async function ReportsPage({
       <ReportView
         report={report}
         period={period}
-        refDateISO={new Date().toISOString()}
+        refDateISO={managuaWallToUtcISO(todayManaguaISO(), "12:00")}
       />
     </div>
   );

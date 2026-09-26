@@ -16,7 +16,7 @@ const STATUS_STYLES: Record<AppointmentStatus, string> = {
   pending:
     "bg-amber-100 text-amber-900 border-amber-200 dark:bg-amber-950 dark:text-amber-200 dark:border-amber-900",
   confirmed:
-    "bg-lavanda-100 text-[#4A3F6B] border-lavanda-200 dark:bg-[#3A3149] dark:text-lavanda-300 dark:border-[#4A3F63]",
+    "bg-lavanda-100 text-[var(--status-confirmed-text)] border-lavanda-200 dark:bg-accent dark:text-lavanda-300 dark:border-accent-foreground/20",
   in_progress:
     "bg-sky-100 text-sky-900 border-sky-200 dark:bg-sky-950 dark:text-sky-200 dark:border-sky-900",
   completed:

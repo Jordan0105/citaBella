@@ -80,8 +80,11 @@ pending ──confirm──► confirmed ──start──► in_progress ──
 6. Redondeo: 2 decimales, half-up (`round(x,2)` en SQL). Diferencias de
    centavos por redondeo van siempre a la dueña (el complemento se calcula por
    resta, no por porcentaje).
-7. Correcciones históricas: nunca UPDATE; ajustes como filas nuevas
-   referenciando la comisión original (owner only, auditadas).
+7. Correcciones históricas: nunca UPDATE de `payments`/`commissions`
+   (inmutables por trigger). Los ajustes se registran como filas nuevas
+   referenciando la comisión original (owner only, auditadas). **Pendiente de
+   modelar**: ver Fase 6 del roadmap (no implementado en el MVP; hoy un error
+   de caja se corrige desde el cierre del día, no recargando la comisión).
 
 ---
 

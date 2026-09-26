@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient as createSupabaseClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/rate-limit";
 import {
   actionFail,
   actionOk,
@@ -14,18 +15,7 @@ import {
   type RegisterIncomeInput,
   type SaveExpenseInput,
 } from "../schemas/cash";
-
-export interface MovementDTO {
-  id: string;
-  kind: "income" | "expense";
-  description: string;
-  amount: number;
-  tip: number;
-  currency: "NIO" | "USD";
-  method: "cash" | "transfer" | "card";
-  category: string | null;
-  date: string;
-}
+import type { MovementDTO } from "../types/movement";
 
 function mapMovement(
   row: Record<string, unknown>,
@@ -52,7 +42,7 @@ function mapMovement(
 async function exchangeRateSnapshot(
   supabase: Awaited<ReturnType<typeof createSupabaseClient>>,
   currency: "NIO" | "USD",
-): Promise<number> {
+): Promise<number | null> {
   if (currency === "NIO") return 1;
   const { data } = await supabase
     .from("settings")
@@ -60,13 +50,20 @@ async function exchangeRateSnapshot(
     .eq("key", "exchange_rate")
     .single();
   const rate = Number((data?.value as { nio_per_usd?: number })?.nio_per_usd);
-  return Number.isFinite(rate) && rate > 0 ? rate : 36.8;
+  // Sin tasa configurada no se inventan números: null = error explícito.
+  return Number.isFinite(rate) && rate > 0 ? rate : null;
 }
+
+const RATE_LIMIT_MESSAGE = "Demasiadas operaciones. Espera un momento.";
 
 /** Ingreso directo de caja (sin cita). Owner only (RLS). */
 export async function registerDirectIncome(
   input: RegisterIncomeInput,
 ): Promise<ActionResult<MovementDTO>> {
+  if (!(await rateLimit("registerDirectIncome", { max: 30, windowSec: 60 }))) {
+    return actionFail("RATE_LIMITED", RATE_LIMIT_MESSAGE);
+  }
+
   const parsed = registerIncomeSchema.safeParse(input);
   if (!parsed.success) {
     return actionFail(
@@ -81,6 +78,12 @@ export async function registerDirectIncome(
     supabase,
     parsed.data.currency,
   );
+  if (exchangeRate === null) {
+    return actionFail(
+      "VALIDATION",
+      "Configura la tasa de cambio en Ajustes antes de usar dólares",
+    );
+  }
 
   const { data, error } = await supabase
     .from("payments")
@@ -112,6 +115,10 @@ export async function registerDirectIncome(
 export async function saveExpense(
   input: SaveExpenseInput,
 ): Promise<ActionResult<MovementDTO>> {
+  if (!(await rateLimit("saveExpense", { max: 30, windowSec: 60 }))) {
+    return actionFail("RATE_LIMITED", RATE_LIMIT_MESSAGE);
+  }
+
   const parsed = saveExpenseSchema.safeParse(input);
   if (!parsed.success) {
     return actionFail(
@@ -126,6 +133,12 @@ export async function saveExpense(
     supabase,
     parsed.data.currency,
   );
+  if (exchangeRate === null) {
+    return actionFail(
+      "VALIDATION",
+      "Configura la tasa de cambio en Ajustes antes de usar dólares",
+    );
+  }
 
   const values = {
     description: parsed.data.description,

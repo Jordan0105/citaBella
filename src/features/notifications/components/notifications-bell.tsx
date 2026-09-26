@@ -22,7 +22,11 @@ export function NotificationsBell() {
   const unread = (data ?? []).filter((n) => n.readAt == null).length;
 
   const markRead = useMutation({
-    mutationFn: markAllRead,
+    mutationFn: async () => {
+      const result = await markAllRead();
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: notificationsKeys.all });
     },

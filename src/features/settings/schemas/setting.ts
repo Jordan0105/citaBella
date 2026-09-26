@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Json } from "@/types/db.generated";
 
 const pct = z.number().min(0, "Entre 0 y 100").max(100, "Entre 0 y 100");
 const timeHM = z.string().regex(/^\d{2}:\d{2}$/, "Hora inválida (HH:mm)");
@@ -33,12 +34,10 @@ export function isSettingKey(key: string): key is SettingKey {
   return key in SETTING_SCHEMAS;
 }
 
-export function validateSetting(
-  key: SettingKey,
-  value: unknown,
-): Record<string, unknown> | null {
+/** Valida y normaliza el valor al shape Json que espera la tabla settings. */
+export function validateSetting(key: SettingKey, value: unknown): Json | null {
   const result = SETTING_SCHEMAS[key].safeParse(value);
-  return result.success ? (result.data as Record<string, unknown>) : null;
+  return result.success ? (result.data as Json) : null;
 }
 
 export interface SalonSettings {

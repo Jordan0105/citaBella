@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
+import { todayManaguaISO } from "@/lib/dates";
 import { formatMoney, type CurrencyCode } from "@/lib/money";
-import type { MovementDTO } from "../actions/cash";
+import type { MovementDTO } from "../types/movement";
 
 export interface CashClose {
   day: string;
@@ -25,7 +26,6 @@ const MOVEMENT_DAYS = 30;
 export async function getCashData(): Promise<CashData> {
   const supabase = await createClient();
   const since = new Date(Date.now() - MOVEMENT_DAYS * 86_400_000).toISOString();
-  const today = new Date().toISOString().slice(0, 10); // suficiente: cierre de HOY se refina abajo
 
   const [payments, expenses, closeRows] = await Promise.all([
     supabase
@@ -49,11 +49,8 @@ export async function getCashData(): Promise<CashData> {
   if (expenses.error) throw expenses.error;
   if (closeRows.error) throw closeRows.error;
 
-  // Cierre de HOY en Managua: v_cash_close usa día de Managua; hoy en ISO local
-  const todayManagua = new Date(Date.now() - 6 * 3600 * 1000)
-    .toISOString()
-    .slice(0, 10);
-  void today;
+  // Cierre de HOY en Managua: v_cash_close usa día de Managua
+  const todayManagua = todayManaguaISO();
 
   const byCurrencyMap = new Map<
     CurrencyCode,

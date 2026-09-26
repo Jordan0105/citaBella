@@ -41,10 +41,11 @@ export function ReportView({ report, period, refDateISO }: ReportViewProps) {
       toast.error(result.error.message);
       return;
     }
-    const blob = Buffer.from(result.data.fileBase64, "base64");
-    const url = URL.createObjectURL(
-      new Blob([blob], { type: "application/vnd.ms-excel" }),
+    const bytes = Uint8Array.from(atob(result.data.fileBase64), (c) =>
+      c.charCodeAt(0),
     );
+    const blob = new Blob([bytes], { type: "application/vnd.ms-excel" });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
     link.download = result.data.filename;

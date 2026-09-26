@@ -170,6 +170,17 @@ export function currentWeekRangeISO(): { from: string; to: string } {
   };
 }
 
+/**
+ * Fecha de "hoy" en Managua como "YYYY-MM-DD". Única fuente de verdad para
+ * los cortes de día en queries, cron y reportes (no duplicar el offset).
+ */
+export function todayManaguaISO(): string {
+  const p = getManaguaParts(new Date());
+  const mm = String(p.month).padStart(2, "0");
+  const dd = String(p.day).padStart(2, "0");
+  return `${p.year}-${mm}-${dd}`;
+}
+
 /** Inicio del año (1 de enero, 00:00 Managua) del instante dado. */
 export function startOfManaguaYear(date: Date): Date {
   const p = getManaguaParts(date);

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
+import { managuaWallToUtcISO } from "@/lib/dates";
 
 /**
  * Cron de recordatorios (diario, 01:00 UTC = 19:00 Managua).
@@ -16,11 +17,22 @@ export async function GET(request: NextRequest) {
 
   const supabase = createAdminClient();
 
-  // Mañana en Managua
-  const nowManagua = new Date(Date.now() - 6 * 3600 * 1000);
-  const tomorrowStart = new Date(nowManagua.getTime() + 24 * 3600 * 1000);
-  tomorrowStart.setUTCHours(0, 0, 0, 0);
-  const tomorrowEnd = new Date(tomorrowStart.getTime() + 86_399_999);
+  // Mañana en Managua (pared de calendario, no aritmética de ms)
+  const tomorrowParts = (() => {
+    const [y, m, d] = new Date(Date.now() - 6 * 3600 * 1000 + 24 * 3600 * 1000)
+      .toISOString()
+      .slice(0, 10)
+      .split("-");
+    return { year: Number(y), month: Number(m), day: Number(d) };
+  })();
+  const tomorrowStart = managuaWallToUtcISO(
+    `${tomorrowParts.year}-${String(tomorrowParts.month).padStart(2, "0")}-${String(tomorrowParts.day).padStart(2, "0")}`,
+    "00:00",
+  );
+  const tomorrowEnd = managuaWallToUtcISO(
+    `${tomorrowParts.year}-${String(tomorrowParts.month).padStart(2, "0")}-${String(tomorrowParts.day).padStart(2, "0")}`,
+    "23:59",
+  );
 
   const { data: appointments, error } = await supabase
     .from("appointments")
@@ -28,8 +40,8 @@ export async function GET(request: NextRequest) {
       `id, starts_at, status, client:clients ( full_name ), employee:employees ( id, full_name, user:users!employees_user_id_fkey ( id ) )`,
     )
     .in("status", ["pending", "confirmed"])
-    .gte("starts_at", tomorrowStart.toISOString())
-    .lte("starts_at", tomorrowEnd.toISOString());
+    .gte("starts_at", tomorrowStart)
+    .lte("starts_at", tomorrowEnd);
 
   if (error) {
     return NextResponse.json({ error: "DB_ERROR" }, { status: 500 });

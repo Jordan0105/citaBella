@@ -72,7 +72,8 @@ Prohibidos imports circulares; si ocurren, extraer a un módulo compartido.
 
 ## Prohibiciones
 
-- `console.log` en código merged (usar logger de `lib/logger.ts` si se necesita).
+- `console.log` en código merged (usar un wrapper propio de logger si se
+  necesita; hoy el repo no lo requiere — sonner cubre feedback de UI).
 - Colores/strings de UI hardcodeados fuera de tokens.
 - Lógica de negocio en componentes o en `app/`.
 - `new Date()` local para lógica de negocio → usar helpers de `lib/dates.ts`

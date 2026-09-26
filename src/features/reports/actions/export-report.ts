@@ -1,7 +1,9 @@
 "use server";
 
 import * as XLSX from "xlsx";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { actionFail, actionOk, type ActionResult } from "@/types/action-result";
 import {
   getReport,
@@ -11,6 +13,8 @@ import {
 
 const VALID_PERIODS: ReportPeriod[] = ["daily", "weekly", "monthly", "yearly"];
 
+const refDateSchema = z.string().datetime().optional();
+
 /**
  * Exporta el reporte del período a Excel. Usa la MISMA agregación que la
  * pantalla (getReport) — prohibido duplicar la lógica (agents/reporting.md).
@@ -19,8 +23,21 @@ export async function exportReportExcel(
   period: string,
   refDateISO?: string,
 ): Promise<ActionResult<{ fileBase64: string; filename: string }>> {
+  if (!(await rateLimit("exportReportExcel", { max: 5, windowSec: 60 }))) {
+    return actionFail(
+      "RATE_LIMITED",
+      "Demasiadas exportaciones. Espera un momento.",
+    );
+  }
+
   if (!VALID_PERIODS.includes(period as ReportPeriod)) {
     return actionFail("VALIDATION", "Período inválido");
+  }
+  if (
+    refDateISO !== undefined &&
+    !refDateSchema.safeParse(refDateISO).success
+  ) {
+    return actionFail("VALIDATION", "Fecha de referencia inválida");
   }
 
   const supabase = await createClient();
