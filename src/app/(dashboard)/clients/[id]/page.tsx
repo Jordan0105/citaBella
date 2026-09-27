@@ -11,6 +11,7 @@ import { formatMoney } from "@/lib/money";
 import { formatNicPhone } from "@/lib/phone";
 import { getAuthContext } from "@/features/auth/queries/get-auth-context";
 import { getClientWithHistory } from "@/features/clients/queries/get-clients";
+import { PhotoGallery } from "@/features/appointments/components/photo-gallery";
 
 export const metadata: Metadata = { title: "Cliente" };
 
@@ -114,6 +115,17 @@ export default async function ClientDetailPage({
           )}
         </div>
       </div>
+
+      <section className="space-y-3">
+        <h2 className="text-sm font-semibold text-muted-foreground">
+          Fotos de servicios
+        </h2>
+        <Card className="shadow-soft">
+          <CardContent className="py-4">
+            <PhotoGallery clientId={id} readOnly />
+          </CardContent>
+        </Card>
+      </section>
     </div>
   );
 }

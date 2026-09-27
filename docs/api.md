@@ -179,6 +179,28 @@ markAllNotificationsRead(): Promise<ActionResult<null>>
 
 Lecturas: `notificationsOptions()` (cliente, polling 60s).
 
+## appointment_photos
+
+```ts
+saveAppointmentPhoto(input: {
+  appointmentId: string;
+  storagePath: string;
+  caption?: string;
+}): Promise<ActionResult<AppointmentPhotoDTO>>
+//    Registra una foto ya subida a Storage por el cliente.
+//    Solo owner o la trabajadora asignada. Máximo 12 fotos por cita.
+
+deleteAppointmentPhoto(input: { id: string }): Promise<ActionResult<{ id: string }>>
+//    Borra la foto de Storage y su registro.
+//    Permisos: owner, quien subió la foto o la trabajadora asignada.
+```
+
+Lecturas: `appointmentPhotosOptions(appointmentId)` y
+`clientPhotosOptions(clientId)` (cliente, TanStack Query con signed URLs de 1 h).
+El upload va directo del navegador a Supabase Storage
+(`supabase.storage.from("appointment-photos").upload(...)`), validando tipo y
+tamaño en cliente y en la tabla/storage.
+
 ---
 
 ## Webhooks / cron (única excepción en `app/api/`)

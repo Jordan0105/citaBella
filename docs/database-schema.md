@@ -162,6 +162,33 @@ create table appointment_services (
 create index idx_appointment_services_appointment on appointment_services (appointment_id);
 ```
 
+### appointment_photos — fotos de servicios realizados
+
+```sql
+create table appointment_photos (
+  id uuid primary key default gen_random_uuid(),
+  appointment_id uuid not null references appointments (id) on delete cascade,
+  client_id uuid not null references clients (id) on delete cascade,   -- denormalizado
+  employee_id uuid references employees (id) on delete set null,
+  storage_path text not null unique
+    check (storage_path ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}\.(jpg|jpeg|png|webp)$'),
+  caption text check (char_length(caption) <= 300),
+  uploaded_by uuid references users (id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+create index idx_appointment_photos_appointment on appointment_photos (appointment_id, created_at);
+create index idx_appointment_photos_client on appointment_photos (client_id, created_at desc);
+```
+
+Storage: bucket privado `appointment-photos` (5 MB por foto; JPEG/PNG/WebP).
+La ruta es `<appointment_id>/<uuid>.<ext>`; el primer segmento se usa en las
+policies de `storage.objects` para autorizar por cita. Máximo 12 fotos por cita.
+
+RLS tabla: owner y recepcionista ven todas; trabajadora solo las de sus citas.
+Insert/update: owner o trabajadora asignada. Delete: owner, quien subió la foto
+o la trabajadora asignada. Las URLs se generan como signed URLs (1 h).
+
 ### payments — ingresos (INMUTABLE)
 
 ```sql

@@ -26,6 +26,7 @@ import {
 } from "../actions/manage-appointment";
 import { sendWhatsAppReminder } from "@/features/notifications/actions/send-whatsapp";
 import { whatsappConfirmationOptions } from "@/features/notifications/queries/whatsapp-confirmation";
+import { AppointmentPhotos } from "./appointment-photos";
 import { FinalizeDialog } from "./finalize-dialog";
 import type { AuthRole } from "@/features/auth/queries/get-auth-context";
 import type { AppointmentDTO } from "../types";
@@ -200,6 +201,11 @@ function SheetShell({
               {appointment.notes}
             </p>
           )}
+
+          <AppointmentPhotos
+            appointmentId={appointment.id}
+            canUpload={canSendReminder}
+          />
 
           {children}
         </div>

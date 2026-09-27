@@ -81,7 +81,7 @@ axe 0 críticos, presupuestos de perf verificados en build de producción,
 
 - [x] Notificaciones WhatsApp Business API (recordatorios manuales y automáticos,
       webhook de estados, confirmaciones/cancelaciones por respuesta del cliente).
-- [ ] Fotos de servicios realizados (Storage) en historial del cliente.
+- [x] Fotos de servicios realizados (Storage) en historial del cliente.
 - [ ] Fidelización: cumpleaños, clientes recurrentes, promociones.
 - [ ] Multi-sucursal (evaluar necesidad real antes de modelar).
 - [ ] Sentry + alertas; métricas de negocio a largo plazo.

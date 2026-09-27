@@ -44,6 +44,20 @@ export interface AppointmentReceiptDTO {
   completedAt: string;
 }
 
+/** Foto de un servicio realizado, con URL firmada temporal para mostrar. */
+export interface AppointmentPhotoDTO {
+  id: string;
+  appointmentId: string;
+  clientId: string;
+  employeeId: string | null;
+  storagePath: string;
+  caption: string | null;
+  uploadedBy: string | null;
+  createdAt: string;
+  /** URL firmada de Supabase Storage (caduca). */
+  url: string | null;
+}
+
 /** Catálogos para formularios de cita (serializable, seguro en cliente). */
 export interface AppointmentsMeta {
   clients: { id: string; fullName: string }[];

@@ -140,6 +140,12 @@ pending ──confirm──► confirmed ──start──► in_progress ──
 - Historial de citas del cliente visible para owner/receptionist; la
   trabajadora ve el historial de SUS citas con ese cliente.
 - Baja de cliente = soft delete (`is_active = false`); historial se conserva.
+- **Fotos de servicios realizados**: cada cita puede llevar hasta 12 fotos
+  (JPEG/PNG/WebP, máx. 5 MB) con descripción opcional. Las sube la dueña o la
+  trabajadora asignada desde la ficha de la cita; se ven en el historial del
+  cliente. En el historial la galería es de solo lectura: borrar una foto se
+  hace desde la cita, donde se conoce el permiso exacto. Se guardan en el
+  bucket privado `appointment-photos` de Supabase Storage.
 
 ---
 
