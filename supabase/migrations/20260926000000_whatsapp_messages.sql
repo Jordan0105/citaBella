@@ -37,7 +37,7 @@ create index idx_whatsapp_messages_status on whatsapp_messages (status, created_
 -- ============ TRIGGER updated_at ============
 create trigger trg_whatsapp_messages_updated_at
   before update on whatsapp_messages
-  for each row execute function set_updated_at();
+  for each row execute function fn_set_updated_at();
 
 -- ============ RLS ============
 alter table whatsapp_messages enable row level security;
@@ -84,4 +84,4 @@ create policy whatsapp_messages_delete_owner on whatsapp_messages
 -- ============ AUDITORÍA ============
 create trigger trg_whatsapp_messages_audit
   after update or delete on whatsapp_messages
-  for each row execute function audit_row('whatsapp_messages');
+  for each row execute function fn_audit_row();

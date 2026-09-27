@@ -57,6 +57,7 @@ export function AppointmentSheet({
   return (
     <SheetShell
       appointment={appointment}
+      canSendReminder={canManage}
       open={open}
       onOpenChange={onOpenChange}
     >
@@ -108,11 +109,13 @@ export function AppointmentSheet({
 
 function SheetShell({
   appointment,
+  canSendReminder,
   open,
   onOpenChange,
   children,
 }: {
   appointment: AppointmentDTO;
+  canSendReminder: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
@@ -167,7 +170,10 @@ function SheetShell({
 
           {(appointment.status === "pending" ||
             appointment.status === "confirmed") &&
-            whatsApp && <WhatsAppReminderButton appointment={appointment} />}
+            whatsApp &&
+            canSendReminder && (
+              <WhatsAppReminderButton appointment={appointment} />
+            )}
 
           <ul className="space-y-1">
             {appointment.services.map((line) => (

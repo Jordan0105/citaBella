@@ -12,8 +12,9 @@ export default async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Todo excepto assets estáticos e imágenes.
+     * Todo excepto assets estáticos, imágenes y rutas de API server-to-server
+     * (webhooks de Meta y cron de Vercel se protegen por su propio secreto).
      */
-    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|sw.js|api|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
